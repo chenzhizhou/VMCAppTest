@@ -1,16 +1,21 @@
 package assitant;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Random;
 
 import org.dom4j.Document;
+import org.dom4j.Element;
+import org.dom4j.io.OutputFormat;
 import org.dom4j.io.SAXReader;
+import org.dom4j.io.XMLWriter;
 
 import com.android.uiautomator.core.UiDevice;
 import com.android.uiautomator.testrunner.UiAutomatorTestCase;
+import com.czz.VMCSetting.test.PayStyleConfigAssertContent;
 
 
 @SuppressWarnings("deprecation")
@@ -77,5 +82,28 @@ public class UIAutomatorAssistant extends UiAutomatorTestCase{
 		Random rand = new Random();
 		int randNumber =rand.nextInt(MAX - MIN + 1) + MIN;
 		return randNumber;
+	}
+	public static void init(String configPath){
+		Document filedocument = UIAutomatorAssistant.documentload(configPath);
+		Element configRootElement = filedocument.getRootElement();
+		Element supportPaymentsElement=configRootElement.element("supportPayments");
+		supportPaymentsElement.detach();
+		supportPaymentsElement = configRootElement.addElement("supportPayments");
+		for(int paystyleindex = 0;paystyleindex<PayStyleConfigAssertContent.PayStyle.length;paystyleindex++){
+			Element supportPayment = supportPaymentsElement.addElement("supportPayment");
+			supportPayment.addText(PayStyleConfigAssertContent.PayStyle[paystyleindex]);
+		}
+        FileOutputStream out;
+		try {
+			out = new FileOutputStream(configPath);
+	        OutputFormat format=OutputFormat.createPrettyPrint();
+	        format.setEncoding("UTF-8");
+	        XMLWriter writer=new XMLWriter(out,format);
+	        writer.write(filedocument);
+	        writer.close();
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		UIAutomatorAssistant.UiAutomatorLog("fullAllPayStyle"+"<Success>");
 	}
 }

@@ -1,6 +1,6 @@
 package com.czz.VMCSetting.test;
 
-public class assertContent {
+public class BasicAssertContent {
 
 	public static String YesAndNo[] = {
 			"1",
